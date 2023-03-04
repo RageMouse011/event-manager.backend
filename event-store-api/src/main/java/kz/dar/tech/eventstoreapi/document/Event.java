@@ -1,6 +1,5 @@
 package kz.dar.tech.eventstoreapi.document;
 
-import co.elastic.clients.util.DateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import kz.dar.tech.eventstoreapi.util.Category;
@@ -9,6 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import java.nio.file.Path;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -43,4 +45,7 @@ public class Event {
 
     @Field(type = FieldType.Text)
     private String dateOfCreation;
+
+    @Field(type = FieldType.Text)
+    private List<String> imageUrls;
 }

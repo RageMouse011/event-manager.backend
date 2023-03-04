@@ -20,8 +20,8 @@ public class EventController {
 
     @GetMapping("/all")
     public Page<Event> getAllEvents(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "9") int page,
+            @RequestParam(defaultValue = "9") int size
     ) {
         return eventService.getAllEvents(
                 page,
@@ -35,13 +35,14 @@ public class EventController {
     ) {
         return eventService.getEventById(eventId);
     }
+
     @GetMapping("/filter")
     public Page<Event> getEventsWithFiltersAndSoring(
             @RequestParam(value = "category", required = false) Category category,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortDirection", required = false) Sort.Direction sortDirection,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "page", defaultValue = "9") int page,
+            @RequestParam(value = "size", defaultValue = "9") int size
     ) {
         return eventService.getEventsWithFiltersAndSoring(
                 category,
@@ -56,11 +57,19 @@ public class EventController {
     @PostMapping
     public Event createEvent(
             @RequestPart("event") Event event,
-            @RequestPart("file") MultipartFile file
-            ) throws IOException {
+            @RequestPart(value = "photo1", required = false) MultipartFile photo1,
+            @RequestPart(value = "photo2", required = false) MultipartFile photo2,
+            @RequestPart(value = "photo3", required = false) MultipartFile photo3,
+            @RequestPart(value = "photo4", required = false) MultipartFile photo4,
+            @RequestPart(value = "photo5", required = false) MultipartFile photo5
+    ) throws IOException {
         return eventService.createEvent(
                 event,
-                file
+                photo1,
+                photo2,
+                photo3,
+                photo4,
+                photo5
         );
     }
 
@@ -81,6 +90,7 @@ public class EventController {
     ) {
         eventService.deleteEvent(eventId);
     }
+
 
     @PostMapping("/{eventId}/like")
     public Event likeEvent(

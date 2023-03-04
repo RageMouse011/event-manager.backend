@@ -11,8 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.nio.file.Files.write;
 
 
 @Service
@@ -21,19 +28,44 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventProducer eventProducer;
-    private final PhotoService photoService;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private static final String DATA_STORE_URL = "/home/ragemouse11/event-manager-datastore/";
 
     public Event createEvent(
             Event event,
-            MultipartFile file
+            MultipartFile photo1,
+            MultipartFile photo2,
+            MultipartFile photo3,
+            MultipartFile photo4,
+            MultipartFile photo5
     ) throws IOException {
         event.setDateOfCreation(LocalDateTime.now().format(FORMATTER));
-        Event createdEvent = eventRepository.save(event);
-        photoService.uploadPhoto(file, event.getId());
+        List<MultipartFile> photos = new ArrayList<>();
+        if (photo1 != null) photos.add(photo1);
+        if (photo2 != null) photos.add(photo2);
+        if (photo3 != null) photos.add(photo3);
+        if (photo4 != null) photos.add(photo4);
+        if (photo5 != null) photos.add(photo5);
 
+        List<String> photosUrls = uploadPhotos(photos);
+        event.setImageUrls(photosUrls);
+
+
+        Event createdEvent = eventRepository.save(event);
         eventProducer.sendEvent(createdEvent.toString(), "event-key");
         return createdEvent;
+    }
+
+    public List<String> uploadPhotos(
+            List<MultipartFile> photos
+    ) throws IOException {
+        List<String> photosUrls = new ArrayList<>();
+        for (MultipartFile photo : photos) {
+            byte[] bytes = photo.getBytes();
+            Path path = Paths.get(DATA_STORE_URL + photo.getOriginalFilename());
+            photosUrls.add(Files.write(path, bytes).toString());
+        }
+        return photosUrls;
     }
 
     public Event getEventById(String eventId) {
