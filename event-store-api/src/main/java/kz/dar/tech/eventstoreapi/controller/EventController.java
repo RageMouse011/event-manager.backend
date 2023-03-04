@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @RestController
@@ -52,9 +55,13 @@ public class EventController {
 
     @PostMapping
     public Event createEvent(
-            @RequestBody Event event
-    ) {
-        return eventService.createEvent(event);
+            @RequestPart("event") Event event,
+            @RequestPart("file") MultipartFile file
+            ) throws IOException {
+        return eventService.createEvent(
+                event,
+                file
+        );
     }
 
     @PutMapping("/{eventId}")

@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,11 +21,16 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventProducer eventProducer;
+    private final PhotoService photoService;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-    public Event createEvent(Event event) {
+    public Event createEvent(
+            Event event,
+            MultipartFile file
+    ) throws IOException {
         event.setDateOfCreation(LocalDateTime.now().format(FORMATTER));
         Event createdEvent = eventRepository.save(event);
+        photoService.uploadPhoto(file, event.getId());
 
         eventProducer.sendEvent(createdEvent.toString(), "event-key");
         return createdEvent;
