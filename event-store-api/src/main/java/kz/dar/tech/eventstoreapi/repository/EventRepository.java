@@ -15,5 +15,6 @@ public interface EventRepository
 
     Page<Event> findByCategory(
             Category category,
-            Pageable pageable);
+            Pageable pageable
+    );
 }
