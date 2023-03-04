@@ -2,10 +2,14 @@ package kz.dar.tech.eventstoreapi.controller;
 
 import kz.dar.tech.eventstoreapi.document.Event;
 import kz.dar.tech.eventstoreapi.service.EventService;
+import kz.dar.tech.eventstoreapi.util.Category;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/event")
@@ -14,41 +18,50 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping("/all")
-    public List<Event> getAllEvents() {
-        return eventService.getAllEvents();
-    }
-
-    @GetMapping
-    public Event getEventById(
-            @RequestParam String eventId
+    public Page<Event> getAllEvents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return eventService.getEventById(
-                eventId
+        return eventService.getAllEvents(
+                page,
+                size
         );
     }
 
-    @GetMapping("/filter")
-    public List<Event> filterEventsByCategoriesAndSections(
-            @RequestParam(required = false) String categories,
-            @RequestParam(required = false) List<String> sections
+    @GetMapping("/{eventId}")
+    public Event getEventById(
+            @PathVariable String eventId
     ) {
-        return eventService.searchEvents(
-                categories,
-                sections);
+        return eventService.getEventById(eventId);
     }
+    @GetMapping("/filter")
+    public Page<Event> getEventsWithFiltersAndSoring(
+            @RequestParam(value = "category", required = false) Category category,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "sortDirection", required = false) Sort.Direction sortDirection,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return eventService.getEventsWithFiltersAndSoring(
+                category,
+                sortBy,
+                sortDirection,
+                page,
+                size
+        );
+    }
+
 
     @PostMapping
     public Event createEvent(
             @RequestBody Event event
     ) {
-        return eventService.createEvent(
-                event
-        );
+        return eventService.createEvent(event);
     }
 
-    @PutMapping
+    @PutMapping("/{eventId}")
     public Event updateEvent(
-            @RequestParam String eventId,
+            @PathVariable String eventId,
             @RequestBody Event event
     ) {
         return eventService.updateEvent(
@@ -57,12 +70,17 @@ public class EventController {
         );
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{eventId}")
     public void deleteEvent(
-            @RequestParam String eventId
+            @PathVariable String eventId
     ) {
-        eventService.deleteEvent(
-                eventId
-        );
+        eventService.deleteEvent(eventId);
+    }
+
+    @PostMapping("/{eventId}/like")
+    public Event likeEvent(
+            @PathVariable String eventId
+    ) {
+        return eventService.likeEvent(eventId);
     }
 }
