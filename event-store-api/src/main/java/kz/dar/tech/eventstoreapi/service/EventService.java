@@ -1,8 +1,12 @@
 package kz.dar.tech.eventstoreapi.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import kz.dar.tech.eventstoreapi.document.Event;
 import kz.dar.tech.eventstoreapi.repository.EventRepository;
 import kz.dar.tech.eventstoreapi.util.Category;
+import kz.dar.tech.eventstoreapi.util.EventSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,10 +25,16 @@ public class EventService {
     private final EventProducer eventProducer;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-    public Event createEvent(Event event) {
+    public Event createEvent(Event event)
+            throws JsonProcessingException {
         event.setDateOfCreation(LocalDateTime.now().format(FORMATTER));
         Event createdEvent = eventRepository.save(event);
-        eventProducer.sendEvent(createdEvent, "event-key");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Event.class, new EventSerializer());
+        objectMapper.registerModule(module);
+        eventProducer.sendEvent(objectMapper.writeValueAsString(createdEvent), "event-key");
         return createdEvent;
     }
 

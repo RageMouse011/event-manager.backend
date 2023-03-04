@@ -1,5 +1,6 @@
 package kz.dar.tech.eventstoreapi.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.dar.tech.eventstoreapi.document.Event;
 import kz.dar.tech.eventstoreapi.service.EventService;
 import kz.dar.tech.eventstoreapi.util.Category;
@@ -55,7 +56,7 @@ public class EventController {
     @PostMapping
     public Event createEvent(
             @RequestBody Event event
-    ) {
+    ) throws JsonProcessingException {
         return eventService.createEvent(event);
     }
 

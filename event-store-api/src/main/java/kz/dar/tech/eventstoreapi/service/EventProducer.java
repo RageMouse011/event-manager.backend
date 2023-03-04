@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class EventProducer {
-    private final KafkaTemplate<String, Event> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void sendEvent(
-            Event event,
+            String event,
             String key
     ) {
-        ProducerRecord<String, Event> producerRecord = new ProducerRecord<>(
+        ProducerRecord<String, String> producerRecord = new ProducerRecord<>(
                 "event-topic",
                 key,
                 event);
         kafkaTemplate.send(producerRecord);
-        System.out.println("Sent event: " + event + "with key: " + key);
+        System.out.println("Sent event: " + event + " with key: " + key);
     }
 }

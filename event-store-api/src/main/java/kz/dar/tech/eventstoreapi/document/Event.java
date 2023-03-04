@@ -4,25 +4,18 @@ import co.elastic.clients.util.DateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import kz.dar.tech.eventstoreapi.util.Category;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.joda.time.LocalDate;
+import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import java.time.LocalDateTime;
-import java.util.Date;
 
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(indexName = "events")
 public class Event {
