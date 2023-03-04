@@ -6,7 +6,6 @@ import kz.dar.tech.eventstoreapi.util.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +18,14 @@ import java.time.format.DateTimeFormatter;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    private final EventProducer eventProducer;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     public Event createEvent(Event event) {
         event.setDateOfCreation(LocalDateTime.now().format(FORMATTER));
-        return eventRepository.save(event);
+        Event createdEvent = eventRepository.save(event);
+        eventProducer.sendEvent(createdEvent, "event-key");
+        return createdEvent;
     }
 
     public Event getEventById(String eventId) {

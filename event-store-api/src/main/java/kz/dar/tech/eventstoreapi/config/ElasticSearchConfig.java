@@ -29,10 +29,10 @@ public class ElasticSearchConfig {
         );
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    }
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//        return new ObjectMapper()
+//                .registerModule(new JavaTimeModule())
+//                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//    }
 }
