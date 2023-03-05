@@ -74,9 +74,11 @@ public class EventService {
 
     public Page<Event> getAllEvents(
             int page,
-            int size
+            int size,
+            String sortedBy,
+            Sort.Direction sortDirection
     ) {
-        return findAllOrderBy("dateOfCreation", Sort.Direction.valueOf("DESC"), page, size);
+        return findAllOrderBy(sortedBy, sortDirection, page, size);
     }
 
     public Page<Event> getEventsWithFiltersAndSoring(
@@ -84,7 +86,8 @@ public class EventService {
             String sortBy,
             Sort.Direction sortDirection,
             int page,
-            int size) {
+            int size
+    ) {
         if (sortDirection == null) {
             sortDirection = Sort.Direction.DESC;
         }
@@ -112,7 +115,8 @@ public class EventService {
             String sortBy,
             Sort.Direction sortDirection,
             int page,
-            int size) {
+            int size
+    ) {
         Sort sort = sortBy != null ? Sort.by(sortDirection, sortBy) : Sort.by(sortDirection, "dateOfCreation");
         return eventRepository.findAll(PageRequest.of(page, size, sort));
     }

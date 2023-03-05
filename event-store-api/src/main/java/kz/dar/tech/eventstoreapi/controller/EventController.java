@@ -20,12 +20,16 @@ public class EventController {
 
     @GetMapping("/all")
     public Page<Event> getAllEvents(
-            @RequestParam(defaultValue = "9") int page,
-            @RequestParam(defaultValue = "9") int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "DESC") Sort.Direction sortDirection
     ) {
         return eventService.getAllEvents(
                 page,
-                size
+                size,
+                sortBy,
+                sortDirection
         );
     }
 
@@ -41,7 +45,7 @@ public class EventController {
             @RequestParam(value = "category", required = false) Category category,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortDirection", required = false) Sort.Direction sortDirection,
-            @RequestParam(value = "page", defaultValue = "9") int page,
+            @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "9") int size
     ) {
         return eventService.getEventsWithFiltersAndSoring(
